@@ -17,11 +17,13 @@ namespace System_Programming.Lesson3
 
             _view.StartButton.onClick.AddListener(StartServer);
             _view.ShutDownButton.onClick.AddListener(ShutDownServer);
-            _view.ConnectButton.onClick.AddListener(Connect);
+            _view.ConnectButton.onClick.AddListener(OnConnectButton);
             _view.DisconnectButton.onClick.AddListener(Disconnect);
             _view.SendButton.onClick.AddListener(SendMessage);
 
             _client.OnMessageReceive += ReceiveMessage;
+
+            _view.InputNamePanel.SetActive(false);
         }
 
         private void StartServer()
@@ -53,6 +55,21 @@ namespace System_Programming.Lesson3
         public void ReceiveMessage(object message)
         {
             _view.OutputText.text = _view.OutputText.text + "\n" + message.ToString();
+        }
+
+        private void OnConnectButton()
+        {
+            Connect();
+            _view.InputNamePanel.SetActive(true);
+            _view.OkButton.onClick.AddListener(OnOkButton);
+        }
+
+        private void OnOkButton()
+        {
+            if (_view.Name.text == "") _view.Name.text = "na";
+            _client.SendMessage(_view.Name.text);
+            _view.OkButton.onClick.RemoveAllListeners();
+            _view.InputNamePanel.SetActive(false);
         }
 
         public void Dispose()

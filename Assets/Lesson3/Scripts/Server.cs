@@ -15,6 +15,7 @@ namespace System_Programming.Lesson3
         private bool _isStarted = false;
         private byte _error;
         private readonly List<int> _connectionIDs = new List<int>();
+        private readonly Dictionary<int, string> _connectionNames = new Dictionary<int, string>();
 
 
         public void StartServer()
@@ -53,19 +54,29 @@ namespace System_Programming.Lesson3
                     case NetworkEventType.Nothing:
                         break;
                     case NetworkEventType.ConnectEvent:
+                        _connectionNames.TryAdd(connectionId, "");
                         _connectionIDs.Add(connectionId);
-                        SendMessageToAll($"Player {connectionId} has connected.");
-                        Debug.Log($"Player {connectionId} has connected.");
                         break;
                     case NetworkEventType.DataEvent:
                         string message = Encoding.Unicode.GetString(recBuffer, 0, dataSize);
-                        SendMessageToAll($"Player {connectionId}: {message}");
-                        Debug.Log($"Player {connectionId}: {message}");
+                        if (_connectionNames.ContainsKey(connectionId) && _connectionNames[connectionId] == "")
+                        {
+                            _connectionNames[connectionId] = message;
+                            if (_connectionNames[connectionId] == "na") _connectionNames[connectionId] = "Player " + connectionId.ToString();
+                            SendMessageToAll($"{_connectionNames[connectionId]} has connected.");
+                            Debug.Log($"{_connectionNames[connectionId]} has connected.");
+                        }
+                        else
+                        {
+                            SendMessageToAll($"{_connectionNames[connectionId]}: {message}");
+                            Debug.Log($"{_connectionNames[connectionId]}: {message}");
+                        }
                         break;
                     case NetworkEventType.DisconnectEvent:
                         _connectionIDs.Remove(connectionId);
-                        SendMessageToAll($"Player {connectionId} has disconnected.");
-                        Debug.Log($"Player {connectionId} has disconnected.");
+                        SendMessageToAll($"{_connectionNames[connectionId]} has disconnected.");
+                        Debug.Log($"{_connectionNames[connectionId]} has disconnected.");
+                        _connectionNames.Remove(connectionId);
                         break;
                     case NetworkEventType.BroadcastEvent:
                         break;
