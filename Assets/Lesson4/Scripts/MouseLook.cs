@@ -1,10 +1,9 @@
-using Unity.Netcode;
 using UnityEngine;
 
 
 namespace System_Programming.Lesson4
 {
-    public class MouseLook : NetworkBehaviour
+    public class MouseLook : MonoBehaviour
     {
         public Camera PlayerCamera => _camera;
         [Range(0.1f, 10.0f)]
@@ -20,24 +19,10 @@ namespace System_Programming.Lesson4
 
         private void Start()
         {
-            _camera = AddCamera();
+            _camera = GetComponentInChildren<Camera>();
             var rb = GetComponentInChildren<Rigidbody>();
             if (rb != null)
                 rb.freezeRotation = true;
-        }
-
-        private Camera AddCamera()
-        {
-            var camera = GetComponentInChildren<Camera>();
-            if (camera == null)
-            {
-                camera = Camera.main;
-                camera.transform.SetParent(transform, false);
-                var cameraPosition = Vector3.zero;
-                cameraPosition.y = cameraPosition.y + 1.0f;
-                camera.transform.SetPositionAndRotation(cameraPosition, Quaternion.identity);
-            }
-            return camera;
         }
 
         public void Rotation()

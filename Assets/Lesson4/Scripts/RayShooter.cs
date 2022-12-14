@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using System.Collections;
 using UnityEngine;
 
 
@@ -9,17 +9,13 @@ namespace System_Programming.Lesson4
         private Camera _camera;
 
 
-        public RayShooter(GameObject bulletPrefab, GameObject player, int startAmunition) : base(bulletPrefab, player, startAmunition)
-        {
-        }
-
         protected override void Start()
         {
             base.Start();
-            _camera = _player.GetComponentInChildren<Camera>();
+            _camera = GetComponentInChildren<Camera>();
         }
 
-        public override void Update()
+        private void Update()
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -46,30 +42,30 @@ namespace System_Programming.Lesson4
             base.Shooting();
             if (_bullets.Count > 0)
             {
-                Shoot();
+                StartCoroutine(Shoot());
             }
         }
 
-        private async void Shoot()
+        private IEnumerator Shoot()
         {
-            if (_reloading)
+            if (reloading)
             {
-                return;
+                yield break;
             }
             var point = new Vector3(Camera.main.pixelWidth / 2,
             Camera.main.pixelHeight / 2, 0);
             var ray = _camera.ScreenPointToRay(point);
             if (!Physics.Raycast(ray, out var hit))
             {
-                return;
+                yield break;
             }
             var shoot = _bullets.Dequeue();
-            _countBullet = _bullets.Count.ToString();
+            _bulletCount = _bullets.Count.ToString();
             _ammunition.Enqueue(shoot);
             shoot.SetActive(true);
             shoot.transform.position = hit.point;
             shoot.transform.parent = hit.transform;
-            await Task.Delay(2000);
+            yield return new WaitForSeconds(2.0f);
             shoot.SetActive(false);
         }
     }

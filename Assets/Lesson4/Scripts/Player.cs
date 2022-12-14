@@ -7,7 +7,7 @@ namespace System_Programming.Lesson4
     public class Player : NetworkBehaviour
     {
         [SerializeField] private GameObject playerPrefab;
-        private GameObject playerCharacter;
+        //private GameObject playerCharacter;
 
 
         private void Start()
@@ -21,10 +21,11 @@ namespace System_Programming.Lesson4
             {
                 return;
             }
-            playerCharacter = Instantiate(playerPrefab);
-            NetworkManager.AddNetworkPrefab(playerCharacter);
-            //NetworkServer.SpawnWithClientAuthority(playerCharacter,
-            //connectionToClient);
+            
+            
+            Instantiate(playerPrefab).GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+            //playerCharacter = Instantiate(playerPrefab);
+            //NetworkServer.SpawnWithClientAuthority(playerCharacter, connectionToClient);
         }
     }
 }

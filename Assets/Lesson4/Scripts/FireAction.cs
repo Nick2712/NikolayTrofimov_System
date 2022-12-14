@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,30 +7,18 @@ using UnityEngine;
 
 namespace System_Programming.Lesson4
 {
-    public abstract class FireAction : IDisposable
+    public class FireAction : MonoBehaviour
     {
-        public string BulletCount => _countBullet;
-
-        protected readonly GameObject _player;
-        protected readonly GameObject _bulletPrefab;
-        protected readonly int _startAmmunition;
-        protected string _countBullet = string.Empty;
+        [SerializeField]
+        private GameObject _bulletPrefab;
+        [SerializeField]
+        private int _startAmmunition = 20;
+        protected string _bulletCount = string.Empty;
         protected Queue<GameObject> _bullets = new Queue<GameObject>();
         protected Queue<GameObject> _ammunition = new Queue<GameObject>();
-        protected bool _reloading = false;
-        private CancellationTokenSource _cancellationTokenSource;
-        private int _reloadVisualizationIndex;
-        private readonly string[] _reloadVisualization = new string[] { " | ", @" \ ", " - ", " / " };
+        protected bool reloading = false;
+        public string BulletCount => _bulletCount;
 
-
-        public FireAction(GameObject bulletPrefab, GameObject player, int startAmunition)
-        {
-            _bulletPrefab = bulletPrefab;
-            _player = player;
-            _startAmmunition = startAmunition;
-            _cancellationTokenSource = new CancellationTokenSource();
-            Start();
-        }
 
         protected virtual void Start()
         {
@@ -44,42 +32,36 @@ namespace System_Programming.Lesson4
                 }
                 else
                 {
-                    bullet = UnityEngine.Object.Instantiate(_bulletPrefab);
+                    bullet = Instantiate(_bulletPrefab);
                 }
                 bullet.SetActive(false);
                 _ammunition.Enqueue(bullet);
             }
         }
 
-        public virtual void Update() { }
-
         public virtual async void Reloading()
         {
-            _bullets = await Reload(_cancellationTokenSource.Token);
+            _bullets = await Reload();
         }
 
         protected virtual void Shooting()
         {
-            if (_bullets.Count == 0)
-            {
-                Reloading();
-            }
+            if (_bullets.Count == 0) Reloading();
         }
 
-        private async Task<Queue<GameObject>> Reload(CancellationToken cancellationToken)
+        private async Task<Queue<GameObject>> Reload()
         {
-            if (!_reloading)
+            if (!reloading)
             {
-                _reloading = true;
-                await ReloadingAnim(cancellationToken);
-                return await Task.Run(async delegate
+                reloading = true;
+                StartCoroutine(ReloadingAnim());
+                return await Task.Run(delegate
                 {
                     var cage = 10;
                     if (_bullets.Count < cage)
                     {
-                        await Task.Delay(3000);
-                        if (cancellationToken.IsCancellationRequested) return null;
-                        var bullets = _bullets;
+                        Thread.Sleep(3000);
+                        var bullets = this._bullets;
                         while (bullets.Count > 0)
                         {
                             _ammunition.Enqueue(bullets.Dequeue());
@@ -94,7 +76,7 @@ namespace System_Programming.Lesson4
                             }
                         }
                     }
-                    _reloading = false;
+                    reloading = false;
                     return _bullets;
                 });
             }
@@ -104,28 +86,21 @@ namespace System_Programming.Lesson4
             }
         }
 
-        private async Task ReloadingAnim(CancellationToken cancellationToken)
+        private IEnumerator ReloadingAnim()
         {
-            while (_reloading)
+            while (reloading)
             {
-                _countBullet = ReloadVisualization();
-                if (cancellationToken.IsCancellationRequested) return;
-                await Task.Delay(10);
+                _bulletCount = " | ";
+                yield return new WaitForSeconds(0.01f);
+                _bulletCount = @" \ ";
+                yield return new WaitForSeconds(0.01f);
+                _bulletCount = "---";
+                yield return new WaitForSeconds(0.01f);
+                _bulletCount = " / ";
+                yield return new WaitForSeconds(0.01f);
             }
-            _countBullet = _bullets.Count.ToString();
-        }
-
-        private string ReloadVisualization()
-        {
-            _reloadVisualizationIndex++;
-            if (_reloadVisualizationIndex >= _reloadVisualization.Length)
-                _reloadVisualizationIndex = 0;
-            return _reloadVisualization[_reloadVisualizationIndex];
-        }
-
-        public void Dispose()
-        {
-            _cancellationTokenSource.Cancel();
+            _bulletCount = _bullets.Count.ToString();
+            yield return null;
         }
     }
 }

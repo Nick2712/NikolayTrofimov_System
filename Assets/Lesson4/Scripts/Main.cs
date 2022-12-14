@@ -14,9 +14,8 @@ namespace System_Programming.Lesson4
         [SerializeField] private Button _startServerButton;
         [SerializeField] private Button _startHostButton;
         [SerializeField] private GameObject _uiHolder;
-        
-        [SerializeField] private Transform[] _spawnPoints;
 
+        [SerializeField] private Transform[] _spawnPoints;
 
 
         private void Start()
@@ -25,8 +24,8 @@ namespace System_Programming.Lesson4
             _startServerButton.onClick.AddListener(StartServerButton);
             _startHostButton.onClick.AddListener(StartHostButton);
             _uiHolder.SetActive(true);
-            
-            
+
+
         }
 
         private void StartClientButton()
@@ -34,13 +33,14 @@ namespace System_Programming.Lesson4
             NetworkManager.Singleton.StartClient();
             CloseUI();
         }
-        
+
         private void StartServerButton()
         {
             NetworkManager.Singleton.StartServer();
             CloseUI();
         }
-        
+
+
         private void StartHostButton()
         {
             NetworkManager.Singleton.StartHost();
