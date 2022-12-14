@@ -66,11 +66,13 @@ namespace System_Programming.Lesson4
                 _characterController.Move(movement);
                 _mouseLook.Rotation();
                 _serverPosition.Value = transform.position;
+                _serverRotation.Value = transform.rotation;
             }
             else
             {
                 transform.position = Vector3.SmoothDamp(transform.position,
                     _serverPosition.Value, ref _currentVelocity, _movingSpeed * Time.deltaTime);
+                transform.rotation = _serverRotation.Value;
             }
         }
 
