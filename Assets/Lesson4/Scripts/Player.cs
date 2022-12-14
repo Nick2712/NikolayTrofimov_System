@@ -7,7 +7,6 @@ namespace System_Programming.Lesson4
     public class Player : NetworkBehaviour
     {
         [SerializeField] private GameObject playerPrefab;
-        //private GameObject playerCharacter;
 
 
         private void Start()
@@ -21,11 +20,14 @@ namespace System_Programming.Lesson4
             {
                 return;
             }
-            
-            
-            Instantiate(playerPrefab).GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
-            //playerCharacter = Instantiate(playerPrefab);
-            //NetworkServer.SpawnWithClientAuthority(playerCharacter, connectionToClient);
+            var spawner = FindObjectOfType<SpawnPoints>();
+            if (spawner == null) Instantiate(playerPrefab).GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+            else
+            {
+                var randomPoint = spawner.Points[Random.Range(0, spawner.Points.Length)];
+                Instantiate(playerPrefab, randomPoint.position, randomPoint.rotation)
+                    .GetComponent<NetworkObject>().SpawnWithOwnership(OwnerClientId);
+            }
         }
     }
 }

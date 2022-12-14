@@ -1,6 +1,4 @@
-using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 
 namespace System_Programming.Lesson4

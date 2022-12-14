@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 71026897}
+  - component: {fileID: 71026898}
   m_Layer: 0
   m_Name: SpawnPoints
   m_TagString: Untagged
@@ -158,6 +159,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &71026898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 71026896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641e2b35e396c5d439527c197f24d9f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Points>k__BackingField:
+  - {fileID: 676575870}
+  - {fileID: 1920237996}
+  - {fileID: 151077292}
+  - {fileID: 86971337}
 --- !u!1 &86971336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1683,4 +1701,3 @@ MonoBehaviour:
   _startServerButton: {fileID: 1010003533}
   _startHostButton: {fileID: 722446745}
   _uiHolder: {fileID: 1260708548}
-  _spawnPoints: []
