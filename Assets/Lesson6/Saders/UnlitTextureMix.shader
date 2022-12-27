@@ -40,7 +40,7 @@ Shader "Custom/UnlitTextureMix"
 
             v2f vert (appdata_full v)
             {
-                v.vertex.xyz -= v.normal * _Height * (-0.5 + v.texcoord.x) * (-0.5 + v.texcoord.x);
+                v.vertex.xyz -= v.normal * _Height * (-1 + v.texcoord.x * 2) * (-1 + v.texcoord.x * 2);
                 
                 v2f result;
                 result.vertex = UnityObjectToClipPos(v.vertex);
