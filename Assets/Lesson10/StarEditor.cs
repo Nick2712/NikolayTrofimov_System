@@ -13,7 +13,7 @@ namespace System_Programming.Lesson10
         private SerializedProperty _points;
         private SerializedProperty _frequency;
 
-        private Vector3 _pointSnap;
+        private Vector3 _pointSnap = Vector3.zero;
 
 
         private void OnEnable()
@@ -43,6 +43,8 @@ namespace System_Programming.Lesson10
                     MessageType.Info);
             }
 
+            if (serializedObject.ApplyModifiedProperties() && target is Star star)
+                star.UpdateMesh();
 
             serializedObject.ApplyModifiedProperties();
         }
